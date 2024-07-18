@@ -27,15 +27,28 @@ import {
   useNotify,
   useRefresh,
   useTranslate,
+  useTheme,
   DateFieldProps,
 } from "react-admin";
 
 import { DATE_FORMAT } from "../components/date";
+import { blue } from '@mui/material/colors';
+import { get } from 'lodash';
 
 const DestinationPagination = () => <Pagination rowsPerPageOptions={[10, 25, 50, 100, 500, 1000]} />;
 
-const destinationRowSx = (record: RaRecord) => ({
+const destinationRowSxLight = (record: RaRecord) => ({
   backgroundColor: record.retry_last_ts > 0 ? "#ffcccc" : "white",
+});
+
+const destinationRowSxDark = (record: RaRecord) => ({
+  backgroundColor: record.retry_last_ts > 0 ? "#ffcccc" : "black",
+  '& > td': {
+    color: record.retry_last_ts > 0 ? "black" : "white",
+    '& > button': {
+      color: blue[600]
+    }
+  }
 });
 
 const destinationFilters = [<SearchInput source="destination" alwaysOn />];
@@ -102,6 +115,8 @@ const RetryDateField = (props: DateFieldProps) => {
 }
 
 export const DestinationList = (props: ListProps) => {
+  const [theme] = useTheme();
+  const destinationRowSx = theme === 'light' ? destinationRowSxLight : destinationRowSxDark;
   return (
     <List
       {...props}
